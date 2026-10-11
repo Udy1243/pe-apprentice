@@ -7,4 +7,3 @@ iverilog -g2012 -DNO_SHM -o sim ../rtl/fxp.sv ../rtl/pe.sv \
     ../rtl/pe_smoke_tb.sv waves.sv
 
 vvp -n sim
-chmod +x run
