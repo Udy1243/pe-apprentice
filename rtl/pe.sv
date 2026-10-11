@@ -48,7 +48,10 @@ module pe #(
   // TODO: weight promotion. Which register does the multiplier read?
 
   always_comb begin
-    weight_active = '0;
+    if(pe_switch_in)
+      weight_active = weight_bg;
+    else
+    weight_active = pe_weight_out;
   end
 
   // TODO: weight staging. When does weight_bg capture pe_weight_in?
@@ -56,6 +59,8 @@ module pe #(
   always_ff @( posedge clk or posedge rst ) begin
     if ( rst )
       weight_bg <= '0;
+    else if(pe_accept_w_in)
+    weight_bg <= pe_weight_in;
     else
       weight_bg <= weight_bg;
   end
@@ -71,8 +76,18 @@ module pe #(
       pe_switch_out <= 1'b0;
     end
     else if ( !pe_enabled ) begin
+      pe_psum_out   <= pe_psum_in;
+      pe_weight_out <= pe_weight_in;
+      pe_input_out  <= pe_input_in;
+      pe_valid_out  <= pe_valid_in;
+      pe_switch_out <= pe_switch_in;
     end
     else begin
+      pe_psum_out   <= mac_out;
+      pe_weight_out <= weight_active;
+      pe_input_out  <= pe_input_in;
+      pe_valid_out  <= pe_valid_in;
+      pe_switch_out <= pe_switch_in;
     end
   end
 
